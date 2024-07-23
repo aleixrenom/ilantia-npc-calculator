@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Grid, TextField, Button } from "@mui/material";
+import gameInfo from "./gameInfo.json";
 
 const checkRank = (pl: number): number => {
   if (pl <= 0) {
@@ -53,10 +54,15 @@ const modifier = (stat: number, text: boolean = false): string | number => {
 /**
  * Returns the base damage of the melee attack at the given rank
  * @param rank The Melee skill rank, between 0 and 10
- * @param text If true, returns the damage with " dmg" at the end
+ * @param text If true, returns the damage as a string with " dmg" at the end
+ * @param extraDmg Optional amount to add to the damage
  * @returns
  */
-const meleeDamage = (rank: number, text: boolean = false): string | number => {
+const meleeDamage = (
+  rank: number,
+  text: boolean = false,
+  extraDmg: number = 0
+): string | number => {
   if (rank < 0 || rank > 10) return "'rank' needs to be between 0 and 10";
   const damages: { [rank: string]: number } = {
     "0": 0,
@@ -71,13 +77,15 @@ const meleeDamage = (rank: number, text: boolean = false): string | number => {
     "9": 30,
     "10": 40,
   };
-  if (text) return damages[rank.toString()].toString() + " dmg";
-  return damages[rank.toString()];
+  if (text) return (damages[rank.toString()] + extraDmg).toString() + " dmg";
+  return damages[rank.toString()] + extraDmg;
 };
 
 const archeryStats = (
   rank: number,
-  text: boolean = false
+  text: boolean = false,
+  extraDmg: number = 0,
+  extraRange: number = 0
 ): string | { dmg: number; range: number } => {
   if (rank < 0 || rank > 10) return "'rank' needs to be between 0 and 10";
   const stats: { [rank: string]: { dmg: number; range: number } } = {
@@ -95,24 +103,37 @@ const archeryStats = (
   };
   if (text)
     return (
-      stats[rank.toString()].dmg.toString() +
+      (stats[rank.toString()].dmg + extraDmg).toString() +
       " dmg / " +
-      stats[rank.toString()].range.toString() +
+      (stats[rank.toString()].range + extraRange).toString() +
       "ft"
     );
-  return stats[rank.toString()];
+  return {
+    dmg: stats[rank.toString()].dmg + extraDmg,
+    range: stats[rank.toString()].range + extraRange,
+  };
 };
 
 function App() {
   const [npcName, setNpcName] = useState<string>("Name");
+
   const [initBody, setInitBody] = useState<number>(10);
   const [initDex, setInitDex] = useState<number>(10);
   const [initMind, setInitMind] = useState<number>(10);
   const [initSoul, setInitSoul] = useState<number>(10);
+
   const [meleePl, setMeleePl] = useState<number>(0);
   const [archeryPl, setArcheryPl] = useState<number>(0);
   const [alchemyPl, setAlchemyPl] = useState<number>(0);
   const [magicPl, setMagicPl] = useState<number>(0);
+
+  const [armor, setArmor] = useState<number>(0);
+  const [extraHp, setExtraHp] = useState<number>(0);
+  const [extraMeleeDmg, setExtraMeleeDmg] = useState<number>(0);
+  const [extraArcheryDmg, setExtraArcheryDmg] = useState<number>(0);
+  const [extraArcheryRange, setExtraArcheryRange] = useState<number>(0);
+  const [extraIp, setExtraIp] = useState<number>(0);
+  const [speeds, setSpeeds] = useState<string>("30ft");
 
   const bodyStat = initBody + checkRank(meleePl);
   const dexStat = initDex + checkRank(archeryPl);
@@ -123,7 +144,14 @@ function App() {
     <Box>
       <Grid container spacing={2}>
         {/* Left column */}
-        <Grid item md={6}>
+        <Grid
+          item
+          md={6}
+          sx={{
+            overflow: "auto",
+            height: "100vh",
+          }}
+        >
           <h1>Inputs</h1>
 
           <Box component="form" noValidate autoComplete="off">
@@ -133,7 +161,7 @@ function App() {
                   onChange={(e) => setNpcName(e.target.value)}
                   id="npc-name"
                   label="NPC Name"
-                  variant="outlined"
+                  variant="standard"
                   fullWidth
                 />
               </Grid>
@@ -146,7 +174,7 @@ function App() {
                   value={initBody}
                   id="initial-body"
                   label="Body"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -156,7 +184,7 @@ function App() {
                   value={initDex}
                   id="initial-dexterity"
                   label="Dexterity"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -166,7 +194,7 @@ function App() {
                   value={initMind}
                   id="initial-mind"
                   label="Mind"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -176,7 +204,7 @@ function App() {
                   value={initSoul}
                   id="initial-soul"
                   label="Soul"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -189,7 +217,7 @@ function App() {
                   value={meleePl}
                   id="melee-pl"
                   label="Melee PL"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -199,7 +227,7 @@ function App() {
                   value={archeryPl}
                   id="archery-pl"
                   label="Archery PL"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -209,7 +237,7 @@ function App() {
                   value={alchemyPl}
                   id="alchemy-pl"
                   label="Alchemy PL"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
@@ -219,23 +247,84 @@ function App() {
                   value={magicPl}
                   id="magic-pl"
                   label="Magic PL"
-                  variant="outlined"
+                  variant="standard"
                   type="number"
                 />
               </Grid>
-              {/* <Grid item md={6}>
-                <TextField
-                  id="manouvre"
-                  label="Manouvre"
-                  variant="outlined"
-                  multiline
-                  fullWidth
-                />
-              </Grid> */}
+              <Grid item md={12}>
+                <h3>Other</h3>
+              </Grid>
               <Grid item md={3}>
-                <Button type="submit" variant="contained">
-                  Submit
-                </Button>
+                <TextField
+                  onChange={(e) => setArmor(parseInt(e.target.value))}
+                  value={armor}
+                  id="armor"
+                  label="Armor"
+                  variant="standard"
+                  type="number"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) => setSpeeds(e.target.value)}
+                  value={speeds}
+                  id="speeds"
+                  label="Speeds"
+                  variant="standard"
+                  type="text"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) => setExtraHp(parseInt(e.target.value))}
+                  value={extraHp}
+                  id="extraHp"
+                  label="Extra HP"
+                  variant="standard"
+                  type="number"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) => setExtraMeleeDmg(parseInt(e.target.value))}
+                  value={extraMeleeDmg}
+                  id="extraMeleeDmg"
+                  label="Extra Melee dmg"
+                  variant="standard"
+                  type="number"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) => setExtraArcheryDmg(parseInt(e.target.value))}
+                  value={extraArcheryDmg}
+                  id="extraArcheryDmg"
+                  label="Extra Archery dmg"
+                  variant="standard"
+                  type="number"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) =>
+                    setExtraArcheryRange(parseInt(e.target.value))
+                  }
+                  value={extraArcheryRange}
+                  id="extraArcheryRange"
+                  label="Extra Archery range"
+                  variant="standard"
+                  type="number"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  onChange={(e) => setExtraIp(parseInt(e.target.value))}
+                  value={extraIp}
+                  id="extraIp"
+                  label="Extra IP"
+                  variant="standard"
+                  type="number"
+                />
               </Grid>
             </Grid>
           </Box>
@@ -253,24 +342,36 @@ function App() {
             Soul: {soulStat} ({modifier(soulStat, true)})
           </p>
           <p>
-            HP: {2 + (meleePl + archeryPl + alchemyPl + magicPl) * 2 + meleePl}{" "}
+            HP:{" "}
+            {2 +
+              (meleePl + archeryPl + alchemyPl + magicPl) * 2 +
+              meleePl +
+              extraHp}{" "}
             - Defense:{" "}
             {calculateDefense(
               modifier(bodyStat) as number,
-              modifier(dexStat) as number
+              modifier(dexStat) as number,
+              armor
             )}{" "}
-            - Speed: 30ft
+            - Speed: {speeds}
           </p>
           <h3>Skills (PL {meleePl + archeryPl + alchemyPl + magicPl})</h3>
           <p>
             Melee rank {checkRank(meleePl)}
             {" - "}
-            {meleeDamage(checkRank(meleePl), true)}
+            {meleeDamage(checkRank(meleePl), true, extraMeleeDmg)}
           </p>
           <p>
             Archery rank {checkRank(archeryPl)}
             {" - "}
-            {archeryStats(checkRank(archeryPl), true) as string}
+            {
+              archeryStats(
+                checkRank(archeryPl),
+                true,
+                extraArcheryDmg,
+                extraArcheryRange
+              ) as string
+            }
           </p>
           <p>
             Alchemy rank {checkRank(alchemyPl)}

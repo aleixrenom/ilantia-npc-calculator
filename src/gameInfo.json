@@ -1,0 +1,29 @@
+{
+  "manoeuvres": {
+    "melee": [
+      {
+        "id": "cleave",
+        "action": "attack",
+        "name": "Cleave",
+        "brief": "AoE in front of you.",
+        "description": "On attack, you hit 3 squares in front of you, using the same attack roll for all targets."
+      },
+      {
+        "id": "block",
+        "action": "defend",
+        "name": "Block",
+        "brief": "Better defense temporarily.",
+        "description": "On defend, you calculate your base defense as Body mod * 2 instead."
+      },
+      {
+        "id": "",
+        "action": "",
+        "name": "",
+        "brief": "",
+        "description": ""
+      }
+    ],
+    "archery": [],
+    "general": []
+  }
+}
