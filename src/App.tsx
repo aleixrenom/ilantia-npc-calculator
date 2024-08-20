@@ -13,7 +13,8 @@ import { useNpcData } from "./utils/api";
 function App() {
   const [npcName, setNpcName] = useState<string>("Name");
 
-  const { npcData, updateField, loadData, saveData } = useNpcData();
+  const { npcData, updateField, updateData } = useNpcData();
+  let npc = npcData;
 
   const [initBody, setInitBody] = useState<number>(10);
   const [initDex, setInitDex] = useState<number>(10);
@@ -56,8 +57,9 @@ function App() {
             <Grid container spacing={2}>
               <Grid item md={12}>
                 <TextField
-                  onChange={(e) => setNpcName(e.target.value)}
+                  // onChange={(e) => setNpcName(e.target.value)}
                   // onChange={(e) => updateField("name", e.target.value)}
+                  onChange={(e) => (npc.name = e.target.value)}
                   id="npc-name"
                   label="NPC Name"
                   variant="standard"
@@ -225,6 +227,12 @@ function App() {
                   type="number"
                 />
               </Grid>
+              <Grid item md={9}>
+                <Button variant="outlined">Reset</Button>
+              </Grid>
+              <Grid item md={3}>
+                <Button variant="contained">Submit</Button>
+              </Grid>
             </Grid>
           </Box>
         </Grid>
@@ -232,7 +240,7 @@ function App() {
         {/* Right column */}
         <Grid item md={6}>
           <h1>Statblock</h1>
-          <h2>{npcName}</h2>
+          <h2>{npcData.name}</h2>
           <h3>Stats</h3>
           <p>
             Body: {bodyStat} ({calcModifier(bodyStat, true)}){" - "}

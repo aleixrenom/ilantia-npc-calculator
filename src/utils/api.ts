@@ -1,5 +1,5 @@
 import { useState } from "react";
-import dataFile from "../npcData.json";
+// import dataFile from "../npcData.json";
 // import * as fs from "fs";
 // const fs = require("fs");
 // import { writeFile } from "fs-web";
@@ -8,52 +8,41 @@ interface NpcData {
   name: string;
 }
 
-/**
- * Reads the json data file and returns an object with all the data.
- *
- * @param {string} fileName  Name of the data file without extension
- * @return {object} Object with the data
- */
-const readData = (fileName: string) => {
-  try {
-    let rawData = fs.readFileSync(fileName + ".json", "utf8");
-    let obj = JSON.parse(rawData);
-    return obj;
-  } catch (err) {
-    console.log("There has been an error reading the data file: " + err);
+export const loadFromLocalStorage = <T>(key: string): T | null => {
+  const jsonString = localStorage.getItem(key);
+  if (jsonString) {
+    return JSON.parse(jsonString) as T;
   }
+  return null;
 };
 
-/**
- * Gets the object with the updated data and writes it back to the file.
- *
- * @param {object} obj	The object with the updated data
- * @param {string} fileName Name of the data file without extension
- */
-const writeData = (obj: NpcData, fileName: string) => {
-  let json = JSON.stringify(obj, null, 2);
-  fs.writeFileSync(fileName + ".json", json, "utf8");
+export const saveToLocalStorage = (key: string, data: object) => {
+  const jsonString = JSON.stringify(data);
+  localStorage.setItem(key, jsonString);
 };
 
 export const useNpcData = () => {
-  const [npcData, setNpcData] = useState<NpcData>(dataFile);
+  const initialData = loadFromLocalStorage<NpcData>("npcData") || {
+    name: "Name",
+  };
+  const [npcData, setNpcData] = useState<NpcData>(initialData);
 
   const updateField = (field: keyof NpcData, value: string) => {
-    setNpcData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-    saveData();
+    setNpcData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [field]: value,
+      };
+      saveToLocalStorage("npcData", updatedData);
+      return updatedData;
+    });
   };
 
-  const saveData = () => {
-    writeData(npcData, "npcData");
+  const updateData = (data: NpcData) => {
+    setNpcData(data);
+    saveToLocalStorage("npcData", data);
+    return data;
   };
 
-  const loadData = (): NpcData => {
-    setNpcData(readData("npcData"));
-    return npcData;
-  };
-
-  return { npcData, updateField, saveData, loadData };
+  return { npcData, updateField, updateData };
 };
