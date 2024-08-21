@@ -1,0 +1,18 @@
+{
+  "name": "Name",
+  "initBody": 10,
+  "initDex": 10,
+  "initMind": 10,
+  "initSoul": 10,
+  "meleePl": 0,
+  "archeryPl": 0,
+  "alchemyPl": 0,
+  "magicPl": 0,
+  "armor": 0,
+  "extraHp": 0,
+  "extraMeleeDmg": 0,
+  "extraArcheryDmg": 0,
+  "extraArcheryRange": 0,
+  "extraIp": 0,
+  "speeds": "30ft"
+}

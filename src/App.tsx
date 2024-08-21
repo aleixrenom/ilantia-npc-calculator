@@ -11,28 +11,25 @@ import {
 import { useNpcData } from "./utils/api";
 
 function App() {
-  const [npcName, setNpcName] = useState<string>("Name");
-
-  const { npcData, updateField, updateData } = useNpcData();
-  let npc = npcData;
-
-  const [initBody, setInitBody] = useState<number>(10);
-  const [initDex, setInitDex] = useState<number>(10);
-  const [initMind, setInitMind] = useState<number>(10);
-  const [initSoul, setInitSoul] = useState<number>(10);
-
-  const [meleePl, setMeleePl] = useState<number>(0);
-  const [archeryPl, setArcheryPl] = useState<number>(0);
-  const [alchemyPl, setAlchemyPl] = useState<number>(0);
-  const [magicPl, setMagicPl] = useState<number>(0);
-
-  const [armor, setArmor] = useState<number>(0);
-  const [extraHp, setExtraHp] = useState<number>(0);
-  const [extraMeleeDmg, setExtraMeleeDmg] = useState<number>(0);
-  const [extraArcheryDmg, setExtraArcheryDmg] = useState<number>(0);
-  const [extraArcheryRange, setExtraArcheryRange] = useState<number>(0);
-  const [extraIp, setExtraIp] = useState<number>(0);
-  const [speeds, setSpeeds] = useState<string>("30ft");
+  const { npcData, updateField } = useNpcData();
+  const {
+    name,
+    initBody,
+    initDex,
+    initMind,
+    initSoul,
+    alchemyPl,
+    archeryPl,
+    magicPl,
+    meleePl,
+    armor,
+    extraArcheryDmg,
+    extraArcheryRange,
+    extraHp,
+    extraIp,
+    extraMeleeDmg,
+    speeds,
+  } = npcData;
 
   const bodyStat = initBody + calcRank(meleePl);
   const dexStat = initDex + calcRank(archeryPl);
@@ -48,7 +45,7 @@ function App() {
           md={6}
           sx={{
             overflow: "auto",
-            height: "100vh",
+            height: "90vh",
           }}
         >
           <h1>Inputs</h1>
@@ -57,9 +54,8 @@ function App() {
             <Grid container spacing={2}>
               <Grid item md={12}>
                 <TextField
-                  // onChange={(e) => setNpcName(e.target.value)}
-                  // onChange={(e) => updateField("name", e.target.value)}
-                  onChange={(e) => (npc.name = e.target.value)}
+                  onChange={(e) => updateField("name", e.target.value)}
+                  value={name}
                   id="npc-name"
                   label="NPC Name"
                   variant="standard"
@@ -71,7 +67,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setInitBody(parseInt(e.target.value))}
+                  onChange={(e) => updateField("initBody", e.target.value)}
                   value={initBody}
                   id="initial-body"
                   label="Body"
@@ -81,7 +77,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setInitDex(parseInt(e.target.value))}
+                  onChange={(e) => updateField("initDex", e.target.value)}
                   value={initDex}
                   id="initial-dexterity"
                   label="Dexterity"
@@ -91,7 +87,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setInitMind(parseInt(e.target.value))}
+                  onChange={(e) => updateField("initMind", e.target.value)}
                   value={initMind}
                   id="initial-mind"
                   label="Mind"
@@ -101,7 +97,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setInitSoul(parseInt(e.target.value))}
+                  onChange={(e) => updateField("initSoul", e.target.value)}
                   value={initSoul}
                   id="initial-soul"
                   label="Soul"
@@ -114,7 +110,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setMeleePl(parseInt(e.target.value))}
+                  onChange={(e) => updateField("meleePl", e.target.value)}
                   value={meleePl}
                   id="melee-pl"
                   label="Melee PL"
@@ -124,7 +120,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setArcheryPl(parseInt(e.target.value))}
+                  onChange={(e) => updateField("archeryPl", e.target.value)}
                   value={archeryPl}
                   id="archery-pl"
                   label="Archery PL"
@@ -134,7 +130,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setAlchemyPl(parseInt(e.target.value))}
+                  onChange={(e) => updateField("alchemyPl", e.target.value)}
                   value={alchemyPl}
                   id="alchemy-pl"
                   label="Alchemy PL"
@@ -144,7 +140,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setMagicPl(parseInt(e.target.value))}
+                  onChange={(e) => updateField("magicPl", e.target.value)}
                   value={magicPl}
                   id="magic-pl"
                   label="Magic PL"
@@ -157,7 +153,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setArmor(parseInt(e.target.value))}
+                  onChange={(e) => updateField("armor", e.target.value)}
                   value={armor}
                   id="armor"
                   label="Armor"
@@ -167,7 +163,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setSpeeds(e.target.value)}
+                  onChange={(e) => updateField("speeds", e.target.value)}
                   value={speeds}
                   id="speeds"
                   label="Speeds"
@@ -177,7 +173,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setExtraHp(parseInt(e.target.value))}
+                  onChange={(e) => updateField("extraHp", e.target.value)}
                   value={extraHp}
                   id="extraHp"
                   label="Extra HP"
@@ -187,7 +183,7 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setExtraMeleeDmg(parseInt(e.target.value))}
+                  onChange={(e) => updateField("extraMeleeDmg", e.target.value)}
                   value={extraMeleeDmg}
                   id="extraMeleeDmg"
                   label="Extra Melee dmg"
@@ -197,7 +193,9 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setExtraArcheryDmg(parseInt(e.target.value))}
+                  onChange={(e) =>
+                    updateField("extraArcheryDmg", e.target.value)
+                  }
                   value={extraArcheryDmg}
                   id="extraArcheryDmg"
                   label="Extra Archery dmg"
@@ -208,7 +206,7 @@ function App() {
               <Grid item md={3}>
                 <TextField
                   onChange={(e) =>
-                    setExtraArcheryRange(parseInt(e.target.value))
+                    updateField("extraArcheryRange", e.target.value)
                   }
                   value={extraArcheryRange}
                   id="extraArcheryRange"
@@ -219,19 +217,13 @@ function App() {
               </Grid>
               <Grid item md={3}>
                 <TextField
-                  onChange={(e) => setExtraIp(parseInt(e.target.value))}
+                  onChange={(e) => updateField("extraIp", e.target.value)}
                   value={extraIp}
                   id="extraIp"
                   label="Extra IP"
                   variant="standard"
                   type="number"
                 />
-              </Grid>
-              <Grid item md={9}>
-                <Button variant="outlined">Reset</Button>
-              </Grid>
-              <Grid item md={3}>
-                <Button variant="contained">Submit</Button>
               </Grid>
             </Grid>
           </Box>
@@ -240,7 +232,7 @@ function App() {
         {/* Right column */}
         <Grid item md={6}>
           <h1>Statblock</h1>
-          <h2>{npcData.name}</h2>
+          <h2>{name}</h2>
           <h3>Stats</h3>
           <p>
             Body: {bodyStat} ({calcModifier(bodyStat, true)}){" - "}
