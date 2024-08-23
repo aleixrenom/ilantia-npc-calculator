@@ -1,4 +1,3 @@
-import { useState } from "react";
 import defaultValues from "./npcDefaultValues.json";
 import { NpcData } from "../types";
 
@@ -64,27 +63,22 @@ export const saveToLocalStorage = (key: string, data: object) => {
 };
 
 export const useNpcData = () => {
-  const initialData = loadFromLocalStorage<NpcData>("npcData") || defaultValues;
-  // const initialData = defaultValues;
-  const [npcData, setNpcData] = useState<NpcData>(initialData);
-
-  const updateField = (field: keyof NpcData, value: string) => {
-    setNpcData((prevData) => {
-      const updatedData = {
-        ...prevData,
-        [field]: value,
-      };
-      const parsedData = parseData(updatedData);
-      saveToLocalStorage("npcData", parsedData);
-      return parsedData;
-    });
+  const updateField = (field: keyof NpcData, value: string): NpcData => {
+    const prevData = loadFromLocalStorage<NpcData>("npcData") || defaultValues;
+    const updatedData = {
+      ...prevData,
+      [field]: value,
+    };
+    const parsedData = parseData(updatedData);
+    saveToLocalStorage("npcData", parsedData);
+    return parsedData;
   };
 
   const updateData = (data: NpcData) => {
-    setNpcData(data);
-    saveToLocalStorage("npcData", data);
-    return data;
+    const parsedData = parseData(data);
+    saveToLocalStorage("npcData", parsedData);
+    return parsedData;
   };
 
-  return { npcData, updateField, updateData };
+  return { updateField, updateData };
 };

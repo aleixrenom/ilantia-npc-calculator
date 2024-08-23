@@ -1,40 +1,19 @@
-import React, { useState } from "react";
-import { Box, Grid, TextField, Button } from "@mui/material";
-import gameInfo from "./gameInfo.json";
-import {
-  calcArcheryStats,
-  calcDefense,
-  calcMeleeDamage,
-  calcModifier,
-  calcRank,
-} from "./utils/calculate";
-import { useNpcData } from "./utils/api";
+import { Box, Grid, TextField } from "@mui/material";
+import { useNpcData, loadFromLocalStorage } from "./utils/api";
+import InputGroup from "./components/InputGroup";
+import { useState } from "react";
+import StatblockDisplay from "./modules/StatblockDisplay";
+import { NpcData } from "./types";
+import defaultValues from "./utils/npcDefaultValues.json";
 
 function App() {
-  const { npcData, updateField } = useNpcData();
-  const {
-    name,
-    initBody,
-    initDex,
-    initMind,
-    initSoul,
-    alchemyPl,
-    archeryPl,
-    magicPl,
-    meleePl,
-    armor,
-    extraArcheryDmg,
-    extraArcheryRange,
-    extraHp,
-    extraIp,
-    extraMeleeDmg,
-    speeds,
-  } = npcData;
+  const initialData = loadFromLocalStorage<NpcData>("npcData") || defaultValues;
+  const [npcData, setNpcData] = useState<NpcData>(initialData);
+  const { updateField } = useNpcData();
 
-  const bodyStat = initBody + calcRank(meleePl);
-  const dexStat = initDex + calcRank(archeryPl);
-  const mindStat = initMind + calcRank(alchemyPl);
-  const soulStat = initSoul + calcRank(magicPl);
+  const handleFieldChange = (field: keyof NpcData, value: string) => {
+    setNpcData(updateField(field, value));
+  };
 
   return (
     <Box>
@@ -45,7 +24,7 @@ function App() {
           md={6}
           sx={{
             overflow: "auto",
-            height: "90vh",
+            height: "100vh",
           }}
         >
           <h1>Inputs</h1>
@@ -54,175 +33,68 @@ function App() {
             <Grid container spacing={2}>
               <Grid item md={12}>
                 <TextField
-                  onChange={(e) => updateField("name", e.target.value)}
-                  value={name}
+                  onChange={(e) => handleFieldChange("name", e.target.value)}
+                  value={npcData.name}
                   id="npc-name"
                   label="NPC Name"
                   variant="standard"
+                  type="text"
                   fullWidth
                 />
               </Grid>
+
               <Grid item md={12}>
-                <h3>Initial stats</h3>
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("initBody", e.target.value)}
-                  value={initBody}
-                  id="initial-body"
-                  label="Body"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("initDex", e.target.value)}
-                  value={initDex}
-                  id="initial-dexterity"
-                  label="Dexterity"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("initMind", e.target.value)}
-                  value={initMind}
-                  id="initial-mind"
-                  label="Mind"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("initSoul", e.target.value)}
-                  value={initSoul}
-                  id="initial-soul"
-                  label="Soul"
-                  variant="standard"
-                  type="number"
+                <InputGroup
+                  handleFieldChange={handleFieldChange}
+                  npcData={npcData}
+                  title="Initial stats"
+                  inputs={[
+                    { field: "initBody", label: "Body", type: "number" },
+                    { field: "initDex", label: "Dexterity", type: "number" },
+                    { field: "initMind", label: "Mind", type: "number" },
+                    { field: "initSoul", label: "Soul", type: "number" },
+                  ]}
                 />
               </Grid>
               <Grid item md={12}>
-                <h3>Power levels</h3>
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("meleePl", e.target.value)}
-                  value={meleePl}
-                  id="melee-pl"
-                  label="Melee PL"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("archeryPl", e.target.value)}
-                  value={archeryPl}
-                  id="archery-pl"
-                  label="Archery PL"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("alchemyPl", e.target.value)}
-                  value={alchemyPl}
-                  id="alchemy-pl"
-                  label="Alchemy PL"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("magicPl", e.target.value)}
-                  value={magicPl}
-                  id="magic-pl"
-                  label="Magic PL"
-                  variant="standard"
-                  type="number"
+                <InputGroup
+                  handleFieldChange={handleFieldChange}
+                  npcData={npcData}
+                  title="Power levels"
+                  inputs={[
+                    { field: "meleePl", label: "Melee PL", type: "number" },
+                    { field: "archeryPl", label: "Archery PL", type: "number" },
+                    { field: "alchemyPl", label: "Alchemy PL", type: "number" },
+                    { field: "magicPl", label: "Magic PL", type: "number" },
+                  ]}
                 />
               </Grid>
               <Grid item md={12}>
-                <h3>Other</h3>
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("armor", e.target.value)}
-                  value={armor}
-                  id="armor"
-                  label="Armor"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("speeds", e.target.value)}
-                  value={speeds}
-                  id="speeds"
-                  label="Speeds"
-                  variant="standard"
-                  type="text"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("extraHp", e.target.value)}
-                  value={extraHp}
-                  id="extraHp"
-                  label="Extra HP"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("extraMeleeDmg", e.target.value)}
-                  value={extraMeleeDmg}
-                  id="extraMeleeDmg"
-                  label="Extra Melee dmg"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) =>
-                    updateField("extraArcheryDmg", e.target.value)
-                  }
-                  value={extraArcheryDmg}
-                  id="extraArcheryDmg"
-                  label="Extra Archery dmg"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) =>
-                    updateField("extraArcheryRange", e.target.value)
-                  }
-                  value={extraArcheryRange}
-                  id="extraArcheryRange"
-                  label="Extra Archery range"
-                  variant="standard"
-                  type="number"
-                />
-              </Grid>
-              <Grid item md={3}>
-                <TextField
-                  onChange={(e) => updateField("extraIp", e.target.value)}
-                  value={extraIp}
-                  id="extraIp"
-                  label="Extra IP"
-                  variant="standard"
-                  type="number"
+                <InputGroup
+                  handleFieldChange={handleFieldChange}
+                  npcData={npcData}
+                  title="Other"
+                  inputs={[
+                    { field: "armor", label: "Armor", type: "number" },
+                    { field: "speeds", label: "Speeds", type: "string" },
+                    { field: "extraHp", label: "Extra HP", type: "number" },
+                    {
+                      field: "extraMeleeDmg",
+                      label: "Extra Melee dmg",
+                      type: "number",
+                    },
+                    {
+                      field: "extraArcheryDmg",
+                      label: "Extra Archery dmg",
+                      type: "number",
+                    },
+                    {
+                      field: "extraArcheryRange",
+                      label: "Extra Archery range",
+                      type: "number",
+                    },
+                    { field: "extraIp", label: "Extra IP", type: "number" },
+                  ]}
                 />
               </Grid>
             </Grid>
@@ -231,7 +103,8 @@ function App() {
 
         {/* Right column */}
         <Grid item md={6}>
-          <h1>Statblock</h1>
+          <StatblockDisplay data={npcData} />
+          {/* <h1>Statblock</h1>
           <h2>{name}</h2>
           <h3>Stats</h3>
           <p>
@@ -281,7 +154,7 @@ function App() {
             Natural magic rank {calcRank(magicPl)}
             {" - "}
             {"Mak IP: " + magicPl * 2}
-          </p>
+          </p> */}
         </Grid>
       </Grid>
     </Box>
