@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Grid, TextField } from "@mui/material";
-import { useNpcData } from "../utils/api";
+import { Grid, TextField } from "@mui/material";
 import { NpcData } from "../types";
 
 interface InputsProp {
