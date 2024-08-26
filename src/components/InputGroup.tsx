@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, TextField } from "@mui/material";
+import { Grid, TextField, Typography } from "@mui/material";
 import { NpcData } from "../types";
 
 interface InputsProp {
@@ -24,7 +24,7 @@ const InputGroup = ({
   return (
     <Grid container>
       <Grid item md={12}>
-        <h3>{title}</h3>
+        <Typography variant="h6">{title}</Typography>
       </Grid>
       <Grid item md={12}>
         <Grid container spacing={2}>

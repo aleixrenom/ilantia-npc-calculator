@@ -1,4 +1,4 @@
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid, TextField, Typography } from "@mui/material";
 import { NpcData } from "../types";
 import InputGroup from "../components/InputGroup";
 
@@ -10,7 +10,9 @@ interface StatblockFormProps {
 const StatblockForm = ({ handleFieldChange, npcData }: StatblockFormProps) => {
   return (
     <Grid container>
-      <h1>Inputs</h1>
+      <Typography variant="h3" gutterBottom>
+        Inputs
+      </Typography>
 
       <Box component="form" noValidate autoComplete="off">
         <Grid container spacing={2}>

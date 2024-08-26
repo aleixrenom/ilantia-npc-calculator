@@ -6,6 +6,7 @@ import {
   calcModifier,
   calcRank,
 } from "../utils/calculate";
+import Typography from "@mui/material/Typography";
 
 const StatblockDisplay = (npcData: { data: NpcData }) => {
   const {
@@ -34,16 +35,20 @@ const StatblockDisplay = (npcData: { data: NpcData }) => {
 
   return (
     <>
-      <h1>Statblock</h1>
-      <h2>{name}</h2>
-      <h3>Stats</h3>
-      <p>
+      <Typography variant="h3" gutterBottom>
+        Statblock
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        {name}
+      </Typography>
+      <Typography variant="h6">Stats</Typography>
+      <Typography>
         Body: {bodyStat} ({calcModifier(bodyStat, true)}){" - "}
         Dexterity: {dexStat} ({calcModifier(dexStat, true)}){" - "}
         Mind: {mindStat} ({calcModifier(mindStat, true)}){" - "}
         Soul: {soulStat} ({calcModifier(soulStat, true)})
-      </p>
-      <p>
+      </Typography>
+      <Typography gutterBottom>
         HP:{" "}
         {2 +
           (meleePl + archeryPl + alchemyPl + magicPl) * 2 +
@@ -56,14 +61,16 @@ const StatblockDisplay = (npcData: { data: NpcData }) => {
           armor
         )}{" "}
         - Speed: {speeds}
-      </p>
-      <h3>Skills (PL {meleePl + archeryPl + alchemyPl + magicPl})</h3>
-      <p>
+      </Typography>
+      <Typography variant="h6">
+        Skills (PL {meleePl + archeryPl + alchemyPl + magicPl})
+      </Typography>
+      <Typography>
         Melee rank {calcRank(meleePl)}
         {" - "}
         {calcMeleeDamage(calcRank(meleePl), true, extraMeleeDmg)}
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         Archery rank {calcRank(archeryPl)}
         {" - "}
         {
@@ -74,17 +81,17 @@ const StatblockDisplay = (npcData: { data: NpcData }) => {
             extraArcheryRange
           ) as string
         }
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         Alchemy rank {calcRank(alchemyPl)}
         {" - "}
         {"Mak IP: " + alchemyPl * 2}
-      </p>
-      <p>
+      </Typography>
+      <Typography>
         Natural magic rank {calcRank(magicPl)}
         {" - "}
         {"Mak IP: " + magicPl * 2}
-      </p>
+      </Typography>
     </>
   );
 };
