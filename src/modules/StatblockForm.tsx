@@ -9,7 +9,7 @@ interface StatblockFormProps {
 
 const StatblockForm = ({ handleFieldChange, npcData }: StatblockFormProps) => {
   return (
-    <Grid container spacing={2}>
+    <Grid container>
       <h1>Inputs</h1>
 
       <Box component="form" noValidate autoComplete="off">

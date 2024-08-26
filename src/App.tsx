@@ -1,6 +1,5 @@
-import { Box, Grid, TextField } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import { useNpcData, loadFromLocalStorage } from "./utils/api";
-import InputGroup from "./components/InputGroup";
 import { useState } from "react";
 import StatblockDisplay from "./modules/StatblockDisplay";
 import { NpcData } from "./types";
@@ -16,26 +15,34 @@ function App() {
     setNpcData(updateField(field, value));
   };
 
+  const columnStyle = {
+    overflow: "auto",
+    height: "100vh",
+    // padding: "20px",
+  };
+
+  const paperStyle = {
+    margin: "20px",
+    padding: "20px",
+  };
+
   return (
     <Box>
-      <Grid container spacing={2}>
+      <Grid container>
         {/* Left column */}
-        <Grid
-          item
-          md={6}
-          sx={{
-            overflow: "auto",
-            height: "100vh",
-          }}
-        >
-          <StatblockForm
-            handleFieldChange={handleFieldChange}
-            npcData={npcData}
-          />
+        <Grid item md={6} sx={columnStyle}>
+          <Paper elevation={3} sx={paperStyle}>
+            <StatblockForm
+              handleFieldChange={handleFieldChange}
+              npcData={npcData}
+            />
+          </Paper>
         </Grid>
         {/* Right column */}
-        <Grid item md={6}>
-          <StatblockDisplay data={npcData} />
+        <Grid item md={6} sx={columnStyle}>
+          <Paper elevation={3} sx={paperStyle}>
+            <StatblockDisplay data={npcData} />
+          </Paper>
         </Grid>
       </Grid>
     </Box>
